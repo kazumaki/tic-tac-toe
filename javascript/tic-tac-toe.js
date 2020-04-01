@@ -122,23 +122,19 @@ const callbackClosureColumn = (event) => {
   let errorMessage = gameBoard.setMarker($(event.target).data('index'));
   
   if (errorMessage) {
-    alert(errorMessage);
+    $('.alert-message').html(errorMessage);
+    $('.alert-box').addClass('show-element');
+    $('.column').off('click');
   } else {
     if (game.gameOver()) {
-      $('.board-wrapper').html(gameBoard.getBoardHtmlString())
-      setTimeout(function(){
-        alert(game.gameOver()); 
-        gameBoard.reset();
-        $('.board-wrapper').html(gameBoard.getBoardHtmlString());
-        $('.reset-button').click(callbackClosureReset);
-        $('.column').click(callbackClosureColumn);
-      }, 100);
-    } else {
-      $('.board-wrapper').html(gameBoard.getBoardHtmlString());
-      $('.reset-button').click(callbackClosureReset);
-      $('.column').click(callbackClosureColumn);
+      $('.alert-message').html(game.gameOver())
+      $('.alert-box').addClass('show-element');
+      $('.column').off('click');
+      gameBoard.reset();
     }
-    
+    $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+    $('.reset-button').click(callbackClosureReset);
+    $('.column').click(callbackClosureColumn);
   }
 };
 
@@ -146,6 +142,12 @@ const callbackClosureReset = () => {
   gameBoard.reset();
   $('.board-wrapper').html(gameBoard.getBoardHtmlString());
   $('.reset-button').click(callbackClosureReset);
+  $('.column').click(callbackClosureColumn);
+}
+
+const callbackClosureAlertBox = () => {
+  $('.alert-box').removeClass('show-element')
+  $('.column').off('click');
   $('.column').click(callbackClosureColumn);
 }
 
@@ -163,7 +165,7 @@ $(document).ready(() => {
     $('.board-wrapper').html(gameBoard.getBoardHtmlString());
     $('.reset-button').click(callbackClosureReset);
     $('.column').click(callbackClosureColumn);
-    
+    $('.alert-box-button').click(callbackClosureAlertBox);
     event.preventDefault();
   });
 });
