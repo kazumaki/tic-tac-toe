@@ -131,10 +131,14 @@ const callbackClosureColumn = (event) => {
       $('.alert-box').addClass('show-element');
       $('.column').off('click');
       gameBoard.reset();
+      $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+      $('.reset-button').click(callbackClosureReset);
     }
-    $('.board-wrapper').html(gameBoard.getBoardHtmlString());
-    $('.reset-button').click(callbackClosureReset);
-    $('.column').click(callbackClosureColumn);
+    else {
+      $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+      $('.reset-button').click(callbackClosureReset);
+      $('.column').click(callbackClosureColumn);
+    }
   }
 };
 
