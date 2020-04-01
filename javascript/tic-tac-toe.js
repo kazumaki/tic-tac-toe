@@ -3,6 +3,8 @@ const gameBoard = (() => {
                '', '', '', 
                '', '', ''];
   
+  let succesfulMoves = 0;
+
   const getBoard = () => {
     return board;
   }
@@ -27,15 +29,14 @@ const gameBoard = (() => {
       }
 
     }
-
+    succesfulMoves += 1;
     return false;
   }
 
   const reset = () => {
-    for (i = 0; i < 2; i++) {
-      for (j = 0; j < 2; j++) {
-        board[i][j] = '';
-      }
+    console.log('what');
+    for(i = 0; i < 9; i += 1){
+      board[i] = '';
     }
   }
 
@@ -69,7 +70,37 @@ const gameBoard = (() => {
       </div>`
   }
 
-  return {setMarker, reset, getBoard, getBoardHtmlString}
+  const gameOver = (currentPlayer) => {
+    const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]] 
+    for (const winCondition of winConditions) {
+        if (board[winCondition[0]] === board[winCondition[1]] && board[winCondition[0]] === board[winCondition[2]]
+            && board[winCondition[0]] != '') {
+          return `${currentPlayer.getName()} won the game!`;
+        }
+    }
+    if (succesfulMoves == 9) {
+      return 'The game is tied'
+    }
+
+    return false;
+  }
+
+  const winRows = (currentPlayer) => {
+    row1 = [board[0], board[1], board[2]].every(marker => {
+      return marker == currentPlayer.getMarker();
+    })
+    row2 = [board[3], board[4], board[5]].every(marker => {
+      return marker == currentPlayer.getMarker();
+    })
+    row3 = [board[6], board[7], board[8]].every(marker => {
+      return marker == currentPlayer.getMarker();
+    })
+
+    return row1 || row2 || row3;
+  }
+  
+
+  return {setMarker, reset, getBoard, getBoardHtmlString, gameOver}
 })();
 
 const displayController = (() => {
@@ -100,26 +131,37 @@ const Player = (name, marker) => {
 
 
 $(document).ready(() => {
-  // displayController.renderBoard();
-
   players = { 
-    player1: Player('John Doe', 'X'),
-    player2: Player('Jane Doe', 'O')
+    player1: Player('John Doe 1', 'X'),
+    player2: Player('Jane Doe 2', 'O')
   }
+
+  let currentPlayer = players.player1;
   
-  $('body').html(gameBoard.getBoardHtmlString());
+  $('.board-wrapper').html(gameBoard.getBoardHtmlString());
 
 
   const callbackClosureColumn = (event) => {
-    let errorMessage = gameBoard.setMarker(players, players.player1, $(event.target).data('index'));
+    let errorMessage = gameBoard.setMarker(players, currentPlayer, $(event.target).data('index'));
     
     if (errorMessage) {
-      console.log(errorMessage);
+      alert(errorMessage);
+    }else{
+      if (gameBoard.gameOver(currentPlayer)) {
+        alert(gameBoard.gameOver(currentPlayer));
+      }
+      currentPlayer = currentPlayer.getMarker() == players.player1.getMarker() ? players.player2 : players.player1;
+      $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+      $('.column').click(callbackClosureColumn);
     }
-    
-    $('body').html(gameBoard.getBoardHtmlString());
-    $('.column').click(callbackClosureColumn);
   };
   
+  const callbackClosureReset = () => {
+    gameBoard.reset();
+    $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+    $('.column').click(callbackClosureColumn);
+  }
+
+  $('.reset-button').click(callbackClosureReset)
   $('.column').click(callbackClosureColumn);
 });
