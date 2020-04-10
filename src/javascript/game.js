@@ -23,7 +23,6 @@ const game = (() => {
       }
     }
 
-
     if (gameBoard.getSuccessfulMoves() === 9) {
       return 'The game is tied';
     }
