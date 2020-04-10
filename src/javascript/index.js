@@ -1,6 +1,12 @@
+import '../css/reset.css';
+import '../css/style.scss';
+import game from './game';
+import gameBoard from './board';
+import player from './player';
+
 const { $ } = window;
 
-const game = (() => {
+/* const game = (() => {
   let currentPlayer;
   let otherPlayer;
 
@@ -111,13 +117,8 @@ const gameBoard = (() => {
   return {
     setMarker, reset, getBoard, getBoardHtmlString, getSuccessfulMoves,
   };
-})();
+})(); */
 
-const Player = (name, marker) => {
-  const getName = () => name;
-  const getMarker = () => marker;
-  return { getName, getMarker };
-};
 
 /* eslint-disable prefer-const */
 
@@ -126,13 +127,13 @@ let callbackClosureReset;
 
 callbackClosureReset = () => {
   gameBoard.reset();
-  $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+  $('.board-wrapper').html(gameBoard.getBoardHtmlString(game.getCurrentPlayer()));
   $('.reset-button').click(callbackClosureReset);
   $('.column').click(callbackClosureColumn);
 };
 
 callbackClosureColumn = (event) => {
-  const errorMessage = gameBoard.setMarker($(event.target).data('index'));
+  const errorMessage = gameBoard.setMarker($(event.target).data('index'), game.getCurrentPlayer());
 
   if (errorMessage) {
     $('.alert-message').html(errorMessage);
@@ -143,10 +144,10 @@ callbackClosureColumn = (event) => {
     $('.alert-box').addClass('show-element');
     $('.column').off('click');
     gameBoard.reset();
-    $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+    $('.board-wrapper').html(gameBoard.getBoardHtmlString(game.getCurrentPlayer()));
     $('.reset-button').click(callbackClosureReset);
   } else {
-    $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+    $('.board-wrapper').html(gameBoard.getBoardHtmlString(game.getCurrentPlayer()));
     $('.reset-button').click(callbackClosureReset);
     $('.column').click(callbackClosureColumn);
   }
@@ -165,13 +166,13 @@ $(document).ready(() => {
     $('.enter-players').addClass('hide-form');
 
     const players = {
-      player1: Player($(this).serializeArray()[0].value, 'X'),
-      player2: Player($(this).serializeArray()[1].value, 'O'),
+      player1: player($(this).serializeArray()[0].value, 'X'),
+      player2: player($(this).serializeArray()[1].value, 'O'),
     };
 
     game.startGame(players);
 
-    $('.board-wrapper').html(gameBoard.getBoardHtmlString());
+    $('.board-wrapper').html(gameBoard.getBoardHtmlString(game.getCurrentPlayer()));
     $('.reset-button').click(callbackClosureReset);
     $('.column').click(callbackClosureColumn);
     $('.alert-box-button').click(callbackClosureAlertBox);
