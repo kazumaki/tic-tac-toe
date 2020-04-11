@@ -11,6 +11,20 @@ Just clone the repository and open the index.html on your browser.
 git clone https://github.com/kazumaki/tic-tac-toe.git
 ```
 
+## Testing
+
+On the console in project directory run command:
+
+```
+yarn test
+```
+
+or
+
+```
+npm test
+```
+
 ## Built With
 
 * [Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
